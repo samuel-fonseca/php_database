@@ -2,7 +2,7 @@
     "name": "brazucaz/php_database",
     "description": "A full management system for MySQL databse control",
     "keywords": ["database","php","connection"],
-    "version": "dev-master",
+    "version": "1.0.0",
     "type": "library",
     "authors": [
         {
