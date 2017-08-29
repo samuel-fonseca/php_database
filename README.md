@@ -1,4 +1,4 @@
-# php_database
+# php_database - PHP Class
 A full management system for MySQL databse control class. The code is inspired from a Github Gist I found by [jonashansen229](https://gist.github.com/jonashansen229/4534794).
 
 I have extended the Class to allow for SQL commands to `SELECT`, `INSERT`, `UPDATE`, and `DELETE`. All fully modular, so that developers may have an easy time simply getting the code and plug it in straight to what they are working on. I also do claim any rights or responsability over the code.
