@@ -4,6 +4,7 @@
     "keywords": ["database","php","connection"],
     "version": "1.0.0",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Samuel Fonseca",
