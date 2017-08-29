@@ -1,14 +1,21 @@
 {
     "name": "brazucaz/php_database",
     "description": "A full management system for MySQL databse control",
+    "keywords": ["database","php","connection"],
+    "version": "dev-master",
     "type": "library",
-    "require": {
-        "php": ">=5.6.0"
-    },
     "authors": [
         {
             "name": "Samuel Fonseca",
             "email": "samuel.fonseca96@gmail.com"
         }
-    ]
+    ],
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "autoload": {
+        "psr-0" : {
+            "brazucaz\\php_database" : "src"
+        }
+    }
 }
