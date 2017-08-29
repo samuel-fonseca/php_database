@@ -10,7 +10,7 @@ I have extended the Class to allow for SQL commands to `SELECT`, `INSERT`, `UPDA
 Now, as I have mentioned above, I made this to be as easy for the user as I possibily could. So let's get started: assuming you are already using Composer, you can get the project by adding it to the `required` section of your `composer.json`.
 
 ```
-composer require brazucaz/php_database
+composer require brazucaz/php_database dev-master
 ```
 
 Or you can download the class from the `src` folder; you can include it in your project however you feel fit.
