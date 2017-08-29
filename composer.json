@@ -1,0 +1,14 @@
+{
+    "name": "brazucaz/php_database",
+    "description": "A full management system for MySQL databse control",
+    "type": "library",
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "authors": [
+        {
+            "name": "Samuel Fonseca",
+            "email": "samuel.fonseca96@gmail.com"
+        }
+    ]
+}
