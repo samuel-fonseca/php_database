@@ -36,7 +36,7 @@ class database
         // error
         if ($this->_connection->connect_error)
         {
-            trigger_error("Connection Error: " . mysql_connect_error(), E_USER_ERROR);
+            trigger_error("Connection Error: " . $this->_connection->connect_error(), E_USER_ERROR);
         }
     }
     
