@@ -52,7 +52,7 @@ class database
     // Get the connection
     public function get_connection()
     {
-        return $this->connection;
+        return $this->_connection;
     }
     
     /**
@@ -64,7 +64,7 @@ class database
     * @return $content with the table content
     * @return $message with either an error or success message
     */
-    public function select( $fields, $table )
+    public function select( $fields, $table, $extra = '' )
     {
         $message = array();
         
@@ -75,7 +75,7 @@ class database
         
         $rows = implode(', ', $val);
         
-        $sql = "SELECT " . $rows . " FROM " . $table;
+        $sql = "SELECT " . $rows . " FROM " . $table . " " . $extra;
         
         if ($result = $this->_connection->query( $sql ))
         {
