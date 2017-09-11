@@ -69,7 +69,7 @@ I will allow for you to decide how you want to use that information.
 
 Another common action with MySQL databases is to `INSERT` a new row into the database. Thinking of that, I have added the `insert()` function.
 
-This function also has two parameters `insert($content_array, $table)`. Now here's the catch, `$content_array` is different from `$fields` from the Select function.
+This function also has two parameters which are mandatory and one non-mandatory `insert($content_array, $table, $extra = '')`; `$extra` would play in if you have any extra parameters for your query such as, `WHERE`, `LIMIT`, `ORDER BY`, etc. Now here's the catch, `$content_array` is different from `$fields` from the Select function.
 
 `$content_array` is a 2d array setup as a `Key => Value` array. And `$table` --- you guessed it.
 
