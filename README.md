@@ -92,6 +92,14 @@ $mysqli = $db->get_connection();
 $insert = $db->insert($content_array, $table);
 ```
 
+If you have any query parameters that you need to add, send them as a string:
+
+```php
+$exta = 'ORDER BY id ASC LIMIT 1';
+
+$insert = $db->insert($content_array, $table, $extra);
+```
+
 The return value is a 2d array that is setup as:
 
 ```php
