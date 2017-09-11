@@ -7,7 +7,7 @@
 
 class database
 {
-    private $connection;
+    private $_connection;
     private static $_instance;
     private $host = "";
     private $username = "";
