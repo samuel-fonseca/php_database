@@ -1,18 +1,45 @@
-<?php
+w<?php
 /**
 *
-* A full management system for MySQL databse control
+* Connect, view, and modify to a MySQL database
 *
 */
 
+
 class database
 {
+    /**
+     * @var $_connection
+     */
     private $_connection;
+    
+    /**
+     * @var $_instance
+     */
     private static $_instance;
-    private $host = "";
-    private $username = "";
-    private $password = "";
-    private $database = "";
+    
+    
+    // Connection config for DB
+    
+    /**
+     * @var $_host
+     */
+    private $_host = '';
+    
+    /**
+     * @var $_username
+     */
+    private $_username = '';
+    
+    /**
+     * @var $_password
+     */
+    private $_password = '';
+    
+    /**
+     * @var $_database
+     */
+    private $_database = '';
     
     /**
     * Get instance for database
@@ -31,7 +58,7 @@ class database
     // construct
     private function __construct()
     {
-        $this->_connection = new mysqli($this->host, $this->username, $this->password, $this->database);
+        $this->_connection = new mysqli($this->_host, $this->_username, $this->_password, $this->_database);
         
         // error
         if ($this->_connection->connect_error)
@@ -68,6 +95,16 @@ class database
     {
         $message = array();
         
+        if( !is_array( $fields ) )
+        {
+            $message = array(
+                'is_error' => 'warning',
+                'message' => 'Invalid type given for $fields'
+            );
+            return $message;
+            exit();
+        }
+        
         foreach($fields as $value)
         {
             $val[] = $value;
@@ -92,14 +129,17 @@ class database
                 catch (Exception $e)
                 {
                     trigger_error("Error: " , $e->getMessages());
+                    exit();
                 }
             }
             else
             {
                 $message = array(
                     'is_error' => 'warning',
-                    'message' => 'There are no records in the Datbase.'
+                    'message' => 'There are no records in the `' . $table . '` table.'
                 );
+                return $message;
+                exit();
             }
         }
         else
@@ -108,6 +148,8 @@ class database
                 'is_error' => 'danger',
                 'message' => 'Query Error, please revise the information.'
             );
+            return $message;
+            exit();
         }
     }
     
@@ -122,19 +164,32 @@ class database
     */
     public function insert( $content_array, $table )
     {
-        $message = array();
+        if ( !is_array($content_array) )
+        {
+            $message = array(
+                'is_error' => 'danger',
+                'message' => 'Wrong formatted data.'
+            );
+            return $message;
+            exit;
+        }
+        
         $array_num = count($content_array);
 
         // create value holders
-        $value_param = str_repeat( '?, ', $array_num );
-        $stmt_values = rtrim($value_param, ', ');
+        $stmt_values = implode(', ', array_fill(0, sizeof($content_array), '?'));
 
         // create bind params
         $stmt_param = str_repeat('s', $array_num);
 
-
         foreach($content_array as $key => $value)
         {
+			// if $value is an array then we skip it because
+			// it is not the right format
+            if ( is_array($value) )
+            {
+                continue;
+            }
             $key_val[] = $key;
             $val[] = $value;
         }
@@ -148,10 +203,8 @@ class database
             $stmt->bind_param($stmt_param, ...$val);
             $stmt->execute();
             $stmt->close();
-            $message = array(
-                'is_error' => 'success',
-                'message' => 'Record was entered into database.'
-            );
+            
+            return true;
         }
         else
         {
@@ -159,9 +212,9 @@ class database
                 'is_error' => 'danger',
                 'message' => 'Query Error, please revise the information.'
             );
+            
+            return $message;
         }
-        
-        return $message;
     }
     
     
@@ -179,38 +232,48 @@ class database
         $message = array();
         $array_num = count($content_array);
         
-        // value holders
-        $value_param = str_repeat('?, ', $array_num);
-        $stmt_values = rtrim($value_param, ', ');
-        
         // bind params
-        $stmt_param__old = str_repeat('s', $array_num);
-        $add_id = 'i';
-        $stmt_param = substr($stmt_param__old, 0, -1).$add_id;
+        $stmt_param = str_repeat('s', $array_num);
+        $stmt_param .= 'i'; // assumption is that id is `int` value
         
+        // setup sql column names
         foreach($content_array as $key => $value)
         {
+            // if `id` is included skip it
             if($key == 'id')
             {
                 continue;
             }
-            $key_val[] = $key . ' = ?';
+            $table_rows[] = $key . ' = ?';
         }
-        
+        // set index here
+        $i = 0;
+        // foreach loop to get the values
         foreach($content_array as $key => $value)
         {
-            $val[] = $value;
+            // use numeric indexes
+            $val[$i] = $value;
+            // increment index
+            $i++;
         }
+        // add $id to $val
+        $val[$i] = $id;
         
-        $table_rows = implode(', ', $key_val);
+        // separate rows with `,`
+        $table_rows = implode(', ', $table_rows);
         
+        // create query
         $sql = "UPDATE " . $table . " SET " . $table_rows . " WHERE id = ?";
         
+        // prepare database
         if ($stmt = $this->_connection->prepare( $sql ))
         {
+            // bind the params
             $stmt->bind_param($stmt_param, ...$val);
+            // execute the query
             $stmt->execute();
             
+            // check for errors
             if ($stmt->errno)
             {
                 $message = array(
@@ -219,10 +282,23 @@ class database
                 );
             }
             
-            $message = array(
-                'is_error' => 'success',
-                'message' => 'Success: ' . $stmt->affected_rows . ' were updated.'
-            );
+            // make sure at least 1 or more rows were affected
+            if ($stmt->affected_rows > 0)
+            {
+                $message = array(
+                    'is_error' => 'success',
+                    'message' => 'Success: ' . $stmt->affected_rows . ' rows were updated.'
+                );
+            }
+            else
+            {
+                // if not, send warning to user
+                $message = array(
+                    'is_error' => 'warning',
+                    'message' => 'Warning: ' . $stmt->affected_rows . ' rows were updated.'
+                );
+            }
+            
             $stmt->close();
         }
         else
@@ -235,6 +311,7 @@ class database
         }
         
         return $message;
+        //return $stmt_param . "<br>" . $table_rows . "<br>" . $sql . "<br>" . var_dump($val) ;
     }
 
     /**
