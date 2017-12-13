@@ -1,4 +1,4 @@
-w<?php
+<?php
 /**
 *
 * Connect, view, and modify to a MySQL database
